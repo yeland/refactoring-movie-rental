@@ -22,17 +22,12 @@ public class Customer {
 
     String statement() {
         double totalAmount = 0d;
-        int frequentRenterPoints = 0;
+
         Enumeration<Rental> rentals = this.rentals.elements();
         StringBuilder result = new StringBuilder("Rental Record for " + getName() + "：\n");
         while (rentals.hasMoreElements()) {
             Rental each = rentals.nextElement();
             double amount = getSingleAmount(each);
-            //add frequent renter points
-            frequentRenterPoints++;
-            if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) && each.getDaysRented() > 1)
-                frequentRenterPoints++;
-
             //show figures for this rental
             result.append("\t")
                   .append(each.getMovie().getTitle())
@@ -40,10 +35,22 @@ public class Customer {
                   .append(amount).append("\n");
             totalAmount += amount;
         }
+
+        int frequentRenterPoints = getFrequentRenterPoints();
         //add footer lines
         result.append("Amount owed is ").append(totalAmount).append("\n");
         result.append("You earned ").append(frequentRenterPoints).append(" frequent renter points");
         return result.toString();
+    }
+
+    private int getFrequentRenterPoints() {
+        int frequentRenterPoints = 0;
+        Enumeration<Rental> rentals = this.rentals.elements();
+        while (rentals.hasMoreElements()) {
+            Rental each = rentals.nextElement();
+            frequentRenterPoints += each.getRenterPoints();
+        }
+        return frequentRenterPoints;
     }
 
     private double getSingleAmount(Rental each) {
