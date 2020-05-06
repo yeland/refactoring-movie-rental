@@ -35,12 +35,8 @@ public class Customer {
         Enumeration<Rental> rentals = this.rentals.elements();
         while (rentals.hasMoreElements()) {
             Rental each = rentals.nextElement();
-            double amount = getSingleAmount(each);
-            amountLines.append("\t")
-                  .append(each.getMovie().getTitle())
-                  .append("\t")
-                  .append(amount).append("\n");
-            totalAmount += amount;
+            amountLines.append(each.generateAmountLine());
+            totalAmount += each.getAmount();
         }
         amountLines.append("Amount owed is ").append(totalAmount).append("\n");
         return amountLines;
@@ -54,26 +50,6 @@ public class Customer {
             frequentRenterPoints += each.getRenterPoints();
         }
         return frequentRenterPoints;
-    }
-
-    private double getSingleAmount(Rental each) {
-        double thisAmount = 0d;
-        switch (each.getMovie().getPriceCode()) {
-            case Movie.HISTORY:
-                thisAmount += 2;
-                if (each.getDaysRented() > 2)
-                    thisAmount += (each.getDaysRented() - 2) * 1.5;
-                break;
-            case Movie.NEW_RELEASE:
-                thisAmount += each.getDaysRented() * 3;
-                break;
-            case Movie.CAMPUS:
-                thisAmount += 1.5;
-                if (each.getDaysRented() > 3)
-                    thisAmount += (each.getDaysRented() - 3) * 1.5;
-                break;
-        }
-        return thisAmount;
     }
 
 }
